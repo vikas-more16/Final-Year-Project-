@@ -1,5 +1,6 @@
 import { TeamMember, hashInviteToken } from '../models/TeamMember.js'
 import { HttpError } from '../utils/HttpError.js'
+import { memberChanged } from '../ai/orchestrator/index.js'
 
 async function findInvite(token) {
   if (typeof token !== 'string' || token.length < 20) throw new HttpError(404, 'This invitation link is invalid')
@@ -37,6 +38,8 @@ async function respond(req, res, status) {
   member.status = status
   member.respondedAt = new Date()
   await member.save()
+  // A newly active member may fill vacant tasks.
+  if (status === 'active') memberChanged({ name: member.name, projects: member.projects.map((p) => p._id ?? p) })
   res.json({ invite: describe(member) })
 }
 

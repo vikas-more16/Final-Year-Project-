@@ -16,7 +16,7 @@ if (!emailEnabled) {
   console.warn('SMTP is not configured: invitation links will be logged instead of emailed.')
 }
 
-const escape = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+export const escape = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 
 function inviteHtml({ memberName, inviterName, organization, role, projects, url, expiresDays }) {
   const projectLine = projects.length
@@ -52,5 +52,15 @@ export async function sendInviteEmail({ to, ...details }) {
     html: inviteHtml(details),
     text: `${subject}.\nRole: ${details.role}\nAccept or decline: ${details.url}\nThis link expires in ${details.expiresDays} days.`,
   })
+  return true
+}
+
+/** Generic send used by agent notifications. Returns true when the SMTP server accepted the message. */
+export async function sendEmail({ to, subject, html, text }) {
+  if (!transport) {
+    console.log(`\n[email] To: ${to}\n[email] ${subject}\n${text}\n`)
+    return false
+  }
+  await transport.sendMail({ from: env.smtp.from, to, subject, html, text })
   return true
 }

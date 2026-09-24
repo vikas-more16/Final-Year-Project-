@@ -4,6 +4,20 @@ import { Project } from '../models/Project.js'
 import { TeamMember } from '../models/TeamMember.js'
 import { HttpError } from '../utils/HttpError.js'
 import { checkBrd, deleteBrd, openBrd, saveBrd } from '../utils/brdStorage.js'
+import { llmConfigured } from '../ai/llm.js'
+import { requestPlanning } from '../ai/orchestrator/index.js'
+import { AgentRun } from '../models/AgentRun.js'
+import { AuditLog } from '../models/AuditLog.js'
+import { PendingAction } from '../models/PendingAction.js'
+import { ProjectMemory } from '../models/ProjectMemory.js'
+import { Sprint } from '../models/Sprint.js'
+import { WorkItem } from '../models/WorkItem.js'
+
+/** A new or replaced BRD is a project event: the Orchestrator reads it and plans (in the background). */
+function onBrdUploaded(projectId) {
+  if (!llmConfigured) return
+  requestPlanning(projectId, 'BRD_UPLOADED')
+}
 
 async function findProject(req) {
   if (!mongoose.isValidObjectId(req.params.id)) throw new HttpError(404, 'Project not found')
@@ -51,6 +65,7 @@ export async function createProject(req, res) {
   try {
     const project = await Project.create({ owner: req.user._id, name, key, description, model, brd })
     res.status(201).json({ project: { ...project.toPublic(), memberCount: 0 } })
+    onBrdUploaded(project._id)
   } catch (err) {
     await deleteBrd(brd.fileId)
     throw err
@@ -88,6 +103,7 @@ export async function replaceBrd(req, res) {
   project.brd = await saveBrd(req.file, { ownerId: req.user._id, projectKey: project.key })
   await project.save()
   await deleteBrd(previous)
+  onBrdUploaded(project._id)
   res.json({ project: project.toPublic() })
 }
 
@@ -112,5 +128,10 @@ export async function deleteProject(req, res) {
   await project.deleteOne()
   await TeamMember.updateMany({ owner: req.user._id }, { $pull: { projects: project._id } })
   await deleteBrd(project.brd?.fileId)
+  await Promise.all([
+    WorkItem.deleteMany({ project: project._id }), Sprint.deleteMany({ project: project._id }),
+    ProjectMemory.deleteOne({ project: project._id }), AgentRun.deleteMany({ project: project._id }),
+    AuditLog.deleteMany({ project: project._id }), PendingAction.deleteMany({ project: project._id }),
+  ])
   res.json({ message: 'Project deleted' })
 }

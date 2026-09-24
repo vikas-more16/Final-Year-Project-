@@ -5,8 +5,25 @@ import { Project } from '../models/Project.js'
 import { TeamMember } from '../models/TeamMember.js'
 import { HttpError } from '../utils/HttpError.js'
 import { emailEnabled, sendInviteEmail } from '../utils/mailer.js'
+import { memberChanged } from '../ai/orchestrator/index.js'
+import { WorkItem } from '../models/WorkItem.js'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+export function normalizeSkills(skills) {
+  if (skills === undefined || skills === null) return []
+  const list = Array.isArray(skills) ? skills : String(skills).split(',')
+  return [...new Set(list.map((s) => String(s).trim().toLowerCase()).filter(Boolean))].slice(0, 20)
+}
+
+function validCapacity(value) {
+  if (value === undefined || value === '' || value === null) return undefined
+  const hours = Number(value)
+  if (!(hours >= 1 && hours <= 60)) {
+    throw new HttpError(422, 'Please fix the highlighted fields', { capacityHoursPerWeek: 'Capacity must be 1–60 hours per week' })
+  }
+  return Math.round(hours)
+}
 
 /** Keeps only project ids that belong to this manager. */
 async function ownedProjectIds(ownerId, ids) {
@@ -79,13 +96,16 @@ export async function inviteMember(req, res) {
     email,
     role,
     projects: await ownedProjectIds(req.user._id, req.body.projectIds),
+    skills: normalizeSkills(req.body.skills),
+    capacityHoursPerWeek: validCapacity(req.body.capacityHoursPerWeek) ?? 30,
   })
   res.status(201).json(await deliverInvite(member, req.user))
 }
 
 export async function updateMember(req, res) {
   const member = await findMember(req)
-  const { name, role, projectIds } = req.body
+  const { name, role, projectIds, skills, capacityHoursPerWeek, availability } = req.body
+  const previousProjects = member.projects.map(String)
 
   if (name !== undefined) {
     const trimmed = String(name).trim()
@@ -99,9 +119,16 @@ export async function updateMember(req, res) {
     member.role = role
   }
   if (projectIds !== undefined) member.projects = await ownedProjectIds(req.user._id, projectIds)
+  if (skills !== undefined) member.skills = normalizeSkills(skills)
+  if (capacityHoursPerWeek !== undefined) member.capacityHoursPerWeek = validCapacity(capacityHoursPerWeek) ?? member.capacityHoursPerWeek
+  if (availability !== undefined) {
+    if (!['available', 'unavailable'].includes(availability)) throw new HttpError(422, 'Invalid availability')
+    member.availability = availability
+  }
 
   await member.save()
   await member.populate('projects')
+  memberChanged(member, previousProjects)
   res.json({ member: member.toPublic() })
 }
 
@@ -114,5 +141,8 @@ export async function resendInvite(req, res) {
 export async function removeMember(req, res) {
   const member = await findMember(req)
   await member.deleteOne()
+  // Their open tasks go back to the pool; the Orchestrator reassigns or marks them vacant.
+  await WorkItem.updateMany({ assignee: member._id, status: { $ne: 'done' } }, { $set: { assignee: null, 'assignment.state': 'pending' } })
+  memberChanged({ name: member.name, projects: [] }, member.projects.map(String))
   res.json({ message: member.status === 'active' ? 'Member removed' : 'Invitation cancelled' })
 }

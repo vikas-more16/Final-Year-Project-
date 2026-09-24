@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.js'
 import teamRoutes from './routes/team.js'
 import projectRoutes from './routes/projects.js'
 import inviteRoutes from './routes/invites.js'
+import aiRoutes from './routes/ai.js'
 import { errorHandler, notFound } from './middleware/errorHandler.js'
 
 export const app = express()
@@ -21,6 +22,7 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok' }))
 app.use('/api/auth', authRoutes)
 app.use('/api/team', teamRoutes)
 app.use('/api/projects', projectRoutes)
+app.use('/api/projects/:id', aiRoutes)
 app.use('/api/invites', inviteRoutes)
 
 app.use(notFound)

@@ -36,6 +36,31 @@ export const BRD_TYPES = {
 
 // Views a project can show as tabs (labels and icons live in the client). New projects start with all of them.
 export const PROJECT_TABS = [
-  'summary', 'backlog', 'board', 'development', 'timeline', 'docs',
+  'summary', 'ai', 'backlog', 'board', 'development', 'timeline', 'docs',
   'forms', 'calendar', 'code', 'deployments', 'reports', 'releases',
 ]
+
+// When nobody has the exact role, which other roles may take the work (in order of preference).
+export const ROLE_FALLBACKS = {
+  'Frontend Developer': ['Full Stack Developer'],
+  'Backend Developer': ['Full Stack Developer'],
+  'Full Stack Developer': ['Backend Developer', 'Frontend Developer'],
+  'Business Analyst': ['Product Owner'],
+  'Product Owner': ['Business Analyst', 'Team Lead'],
+  'Team Lead': [],
+  'UI/UX Designer': [],
+  'QA Engineer': [],
+  'DevOps Engineer': [],
+}
+
+// Actions an agent may take and whether they run automatically or wait for the manager.
+export const AI_ACTIONS = {
+  create_work_items: { label: 'Create epics, stories, tasks and subtasks', default: 'auto' },
+  assign_task: { label: 'Assign unassigned tasks', default: 'auto' },
+  send_notifications: { label: 'Email assignees about new tasks', default: 'auto' },
+  update_status: { label: 'Update statuses and unblock dependent work', default: 'auto' },
+  reassign_critical_task: { label: 'Reassign Critical or High priority tasks', default: 'approval' },
+  change_deadline: { label: 'Change the project deadline', default: 'approval' },
+  change_scope: { label: 'Re-plan after a BRD change or new requirement', default: 'approval' },
+  remove_work_item: { label: 'Remove backlog items', default: 'approval' },
+}

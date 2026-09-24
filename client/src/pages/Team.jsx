@@ -38,6 +38,9 @@ function MemberForm({ member, roles, projects, onSaved, onClose }) {
     email: member?.email ?? '',
     role: member?.role ?? '',
     projectIds: member?.projects.map((p) => p.id) ?? [],
+    skills: member?.skills?.join(', ') ?? '',
+    capacityHoursPerWeek: member?.capacityHoursPerWeek ?? 30,
+    availability: member?.availability ?? 'available',
   })
   const [errors, setErrors] = useState({})
   const [error, setError] = useState('')
@@ -61,8 +64,11 @@ function MemberForm({ member, roles, projects, onSaved, onClose }) {
     setError('')
     try {
       const result = editing
-        ? await api(`/team/${member.id}`, { method: 'PATCH', body: { name: form.name, role: form.role, projectIds: form.projectIds } })
-        : await api('/team', { method: 'POST', body: form })
+        ? await api(`/team/${member.id}`, { method: 'PATCH', body: {
+          name: form.name, role: form.role, projectIds: form.projectIds, skills: form.skills,
+          capacityHoursPerWeek: Number(form.capacityHoursPerWeek), availability: form.availability,
+        } })
+        : await api('/team', { method: 'POST', body: { ...form, capacityHoursPerWeek: Number(form.capacityHoursPerWeek) } })
       onSaved(result)
     } catch (err) {
       setErrors(err.fields)
@@ -98,6 +104,29 @@ function MemberForm({ member, roles, projects, onSaved, onClose }) {
             {roles.map((r) => <option key={r}>{r}</option>)}
           </select>
           {errors.role && <p className="field-error">{errors.role}</p>}
+        </div>
+        <div className="form-grid form-grid-directory">
+          <div className="field">
+            <label htmlFor="m-skills">Skills</label>
+            <input id="m-skills" className="text-input" value={form.skills} onChange={(e) => set('skills', e.target.value)}
+              placeholder="react, node, mongodb" />
+            <p className="field-note">Comma-separated. The Orchestrator matches these to task skills.</p>
+          </div>
+          <div className="field">
+            <label htmlFor="m-capacity">Hours / week</label>
+            <input id="m-capacity" type="number" min={1} max={60} className={`text-input${errors.capacityHoursPerWeek ? ' has-error' : ''}`}
+              value={form.capacityHoursPerWeek} onChange={(e) => set('capacityHoursPerWeek', e.target.value)} />
+            {errors.capacityHoursPerWeek && <p className="field-error">{errors.capacityHoursPerWeek}</p>}
+          </div>
+          {editing && (
+            <div className="field">
+              <label htmlFor="m-availability">Availability</label>
+              <select id="m-availability" className="text-input" value={form.availability} onChange={(e) => set('availability', e.target.value)}>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+              </select>
+            </div>
+          )}
         </div>
         <div className="field">
           <label>Projects</label>
@@ -286,7 +315,9 @@ export default function Team() {
                 <span className={`avatar avatar-${m.status}`}>{initials(m.name)}</span>
                 <span className="member-id"><strong>{m.name}</strong><small>{m.email}</small></span>
               </span>
-              <span role="cell" className="role-cell">{m.role}</span>
+              <span role="cell" className="role-cell">{m.role}
+                <small className="directory-line">{m.availability === 'unavailable' ? 'Unavailable · ' : ''}{m.capacityHoursPerWeek ?? 30} h/wk{m.skills?.length ? ` · ${m.skills.join(', ')}` : ''}</small>
+              </span>
               <span role="cell" className="projects-cell">
                 {m.projects.length
                   ? m.projects.map((p) => <span className="key-badge" key={p.id} title={p.name}>{p.key}</span>)

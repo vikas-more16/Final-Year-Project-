@@ -9,6 +9,8 @@ const projectSchema = new mongoose.Schema(
     description: { type: String, trim: true, maxlength: 500 },
     // Enforced in the controller so projects created before this field existed stay valid.
     model: { type: String, enum: PROJECT_MODEL_IDS },
+    // Counter for work item keys (MBP-1, MBP-2, ...).
+    workItemSeq: { type: Number, default: 0 },
     // Ordered list of visible tabs; empty means "never customised", which shows every tab.
     tabs: { type: [{ type: String, enum: PROJECT_TABS }], default: undefined },
     brd: {

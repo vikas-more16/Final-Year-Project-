@@ -1,10 +1,11 @@
 import { Navigate, useOutletContext, useParams } from 'react-router-dom'
 import { TAB_BY_ID } from '../../lib/projectTabs'
+import ProjectAI from './ProjectAI'
 import ProjectBacklog from './ProjectBacklog'
 import ProjectBoard from './ProjectBoard'
 import ProjectSummary from './ProjectSummary'
 
-const VIEWS = { summary: ProjectSummary, board: ProjectBoard, backlog: ProjectBacklog }
+const VIEWS = { summary: ProjectSummary, ai: ProjectAI, board: ProjectBoard, backlog: ProjectBacklog }
 
 function TabPlaceholder({ tab }) {
   return (

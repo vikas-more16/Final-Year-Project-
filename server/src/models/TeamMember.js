@@ -9,6 +9,10 @@ const teamMemberSchema = new mongoose.Schema(
     email: { type: String, required: true, lowercase: true, trim: true },
     role: { type: String, required: true, enum: MEMBER_ROLES },
     projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }],
+    // Team Directory data used by the assignment engine.
+    skills: { type: [{ type: String, trim: true, lowercase: true, maxlength: 40 }], default: [] },
+    capacityHoursPerWeek: { type: Number, min: 1, max: 60, default: 30 },
+    availability: { type: String, enum: ['available', 'unavailable'], default: 'available' },
     status: { type: String, enum: ['pending', 'active', 'declined'], default: 'pending' },
     // Only a hash of the invite token is stored, so a leaked database cannot be used to accept invites.
     inviteTokenHash: { type: String, index: true, select: false },
@@ -47,6 +51,9 @@ teamMemberSchema.methods.toPublic = function toPublic() {
     name: this.name,
     email: this.email,
     role: this.role,
+    skills: this.skills,
+    capacityHoursPerWeek: this.capacityHoursPerWeek,
+    availability: this.availability,
     status: this.displayStatus,
     projects: this.projects.map((p) => (p?.toPublic ? p.toPublic() : { id: p })),
     invitedAt: this.invitedAt,

@@ -8,6 +8,7 @@ import { api } from '../../lib/api'
 import { PROJECT_TABS, TAB_BY_ID } from '../../lib/projectTabs'
 import '../../styles/team.css'
 import '../../styles/project.css'
+import '../../styles/ai.css'
 
 function TabMenu({ index, count, onMove, onRemove }) {
   return (

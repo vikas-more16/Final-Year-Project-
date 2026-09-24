@@ -1,10 +1,11 @@
 import {
-  CalendarDays, ChartGantt, ChartLine, ClipboardList, Code, CodeXml, Columns3, FileText, Globe, PackageOpen, Rocket, Rows3,
+  Bot, CalendarDays, ChartGantt, ChartLine, ClipboardList, Code, CodeXml, Columns3, FileText, Globe, PackageOpen, Rocket, Rows3,
 } from 'lucide-react'
 
 /** Every view a project can show. Keep the ids in sync with PROJECT_TABS on the server. */
 export const PROJECT_TABS = [
   { id: 'summary', label: 'Summary', Icon: Globe, description: 'Project overview, BRD, team and agent status.' },
+  { id: 'ai', label: 'AI Orchestrator', Icon: Bot, description: 'Talk to the Orchestrator, review approvals, agent runs, memory and the audit trail.' },
   { id: 'backlog', label: 'Backlog', Icon: Rows3, description: 'Plan sprints and prioritise upcoming work.' },
   { id: 'board', label: 'Board', Icon: Columns3, description: 'Track tasks across To Do, In Progress, In Review and Done.' },
   { id: 'development', label: 'Development', Icon: CodeXml, description: 'Branches, commits and pull requests linked to tasks.' },
