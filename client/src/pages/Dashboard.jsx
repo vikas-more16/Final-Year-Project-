@@ -39,7 +39,7 @@ export default function Dashboard() {
         <p className="eyebrow eyebrow-dark">FOR YOU</p>
         <h1>Welcome, {user.name.split(' ')[0]}.</h1>
         <p className="app-lead">
-          You’re signed in as <b>{user.email}</b>{user.organization && <> at <b>{user.organization}</b></>} via {user.providers.join(' + ')}.
+          {/* You’re signed in as <b>{user.email}</b>{user.organization && <> at <b>{user.organization}</b></>} via {user.providers.join(' + ')}. */}
         </p>
         <div className="app-empty">
           <h2>Your workspace is ready</h2>
