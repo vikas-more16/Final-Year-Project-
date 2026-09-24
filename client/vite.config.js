@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  server: {
+    // Same-origin API calls keep the httpOnly session cookie simple in development.
+    proxy: {
+      '/api': 'http://localhost:5000',
+    },
+  },
 })
