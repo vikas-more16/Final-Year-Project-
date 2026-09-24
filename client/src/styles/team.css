@@ -91,3 +91,30 @@
   .invite-card { padding: 26px 20px; }
   .page-head > .btn-primary { width: 100%; }
 }
+
+/* Project model + BRD */
+.field-note { color: #8b9491; font-size: 12px; margin: 6px 0 0; line-height: 1.5; }
+.model-badge { font-size: 11px; font-weight: 700; letter-spacing: .3px; padding: 3px 9px; border-radius: 10px; background: var(--gold-tint); color: var(--gold-dark); margin-right: auto; margin-left: 8px; }
+
+.file-drop { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 20px 16px; border: 1.5px dashed #c4c3bb; background: var(--paper-2); color: var(--ink-2); font-size: 13px; font-weight: 400; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; }
+.file-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.file-drop:hover, .file-drop.dragging { border-color: #b48632; background: #fbf6e8; }
+.file-drop:focus-within { border-color: #b48632; box-shadow: 0 0 0 3px rgba(180,134,50,.14); }
+.file-drop.has-error { border-color: var(--danger); }
+.file-drop u { color: var(--gold-dark); font-weight: 700; }
+.file-drop small { color: #9aa19d; font-size: 11px; }
+.file-drop-icon { font-size: 22px; color: var(--gold-dark); line-height: 1; margin-bottom: 4px; }
+
+.file-chip { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid #b48632; background: #fbf6e8; }
+.file-chip.has-error { border-color: var(--danger); background: #fbeee9; }
+.file-meta { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.file-meta strong { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-meta small { font-size: 11px; color: var(--muted); }
+.file-kind { flex: none; display: grid; place-items: center; width: 38px; height: 38px; background: var(--navy); color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: .5px; }
+.file-kind-sm { width: 30px; height: 22px; font-size: 9px; }
+
+.brd-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; margin-bottom: 12px; border-top: 1px solid #e6e4dd; border-bottom: 1px solid #e6e4dd; font-size: 13px; min-width: 0; }
+.brd-link { color: var(--ink-2); font-weight: 600; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.brd-link:hover { color: var(--gold-dark); text-decoration: underline; }
+.brd-row small { color: #9aa19d; font-size: 11px; white-space: nowrap; }
+.brd-row .link-button { margin-left: auto; }

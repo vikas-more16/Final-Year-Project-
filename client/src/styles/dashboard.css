@@ -44,7 +44,7 @@ textarea.text-input { height: auto; padding: 10px 12px; resize: vertical; }
 .text-input:disabled { background: #efede6; color: var(--muted); }
 .text-input.mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; letter-spacing: 1px; }
 .field { margin-bottom: 16px; }
-.field > label { display: block; margin-bottom: 7px; }
+.field > label:not(.file-drop) { display: block; margin-bottom: 7px; }
 .field-error { color: var(--danger); font-size: 12px; margin: 6px 0 0; }
 .form-alert { border: 1px solid #e3b3a6; background: #fbeee9; color: #8a3322; padding: 11px 14px; font-size: 13px; margin-bottom: 18px; line-height: 1.5; }
 .muted { color: #9aa19d; }

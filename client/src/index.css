@@ -29,7 +29,7 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; background: var(--paper); }
 #root { min-height: 100svh; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 a { color: inherit; }
 
 .eyebrow { margin: 0 0 18px; color: var(--gold); font-size: 11px; letter-spacing: 2.4px; font-weight: 700; }

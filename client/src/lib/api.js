@@ -6,12 +6,14 @@ export class ApiError extends Error {
   }
 }
 
+/** JSON by default; pass a FormData body for file uploads (the browser sets the multipart boundary). */
 export async function api(path, { method = 'GET', body } = {}) {
+  const isForm = body instanceof FormData
   const res = await fetch(`/api${path}`, {
     method,
     credentials: 'include',
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
+    headers: body && !isForm ? { 'Content-Type': 'application/json' } : undefined,
+    body: body && !isForm ? JSON.stringify(body) : body,
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
