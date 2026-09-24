@@ -8,6 +8,8 @@ import Team from './pages/Team'
 import Projects from './pages/Projects'
 import Invite from './pages/Invite'
 import AppLayout from './components/AppLayout'
+import ProjectLayout, { ProjectIndex } from './pages/project/ProjectLayout'
+import ProjectTab from './pages/project/ProjectTab'
 
 export default function App() {
   return (
@@ -22,6 +24,10 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:projectId" element={<ProjectLayout />}>
+            <Route index element={<ProjectIndex />} />
+            <Route path=":tabId" element={<ProjectTab />} />
+          </Route>
           <Route path="/team" element={<Team />} />
         </Route>
       </Route>

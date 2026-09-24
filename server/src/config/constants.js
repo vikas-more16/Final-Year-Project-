@@ -33,3 +33,9 @@ export const BRD_TYPES = {
   '.txt': 'text/plain',
   '.md': 'text/markdown',
 }
+
+// Views a project can show as tabs (labels and icons live in the client). New projects start with all of them.
+export const PROJECT_TABS = [
+  'summary', 'backlog', 'board', 'development', 'timeline', 'docs',
+  'forms', 'calendar', 'code', 'deployments', 'reports', 'releases',
+]

@@ -6,12 +6,25 @@
 .app-user button { margin-left: 8px; background: none; border: 1px solid rgba(255,255,255,.25); color: #e5e4dc; padding: 6px 12px; cursor: pointer; font-size: 12px; }
 .app-user button:hover { border-color: var(--gold); color: var(--gold); }
 
-.app-side { background: var(--paper-2); border-right: 1px solid var(--line); padding: 18px 10px; display: flex; flex-direction: column; gap: 2px; }
-.app-side a, .app-side-soon { display: flex; justify-content: space-between; padding: 9px 12px; font-size: 14px; color: var(--ink-2); text-decoration: none; border-left: 3px solid transparent; }
+.app-side { background: var(--paper-2); border-right: 1px solid var(--line); padding: 16px 10px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 56px; height: calc(100svh - 56px); overflow-y: auto; }
+.app-side a, .app-side-soon { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 14px; color: var(--ink-2); text-decoration: none; border-left: 3px solid transparent; border-radius: 0 4px 4px 0; }
+.app-side a svg, .app-side-soon svg { flex: none; color: #7c8784; }
 .app-side a:hover { background: #f1efe8; }
 .app-side a.active { background: var(--gold-tint); color: var(--gold-dark); font-weight: 700; border-left-color: var(--gold-dark); }
+.app-side a.active svg { color: var(--gold-dark); }
 .app-side-soon { color: #a4aaa6; }
-.app-side small { color: #b3b6b0; font-size: 10px; letter-spacing: .5px; }
+.app-side-soon small { margin-left: auto; color: #b3b6b0; font-size: 10px; letter-spacing: .5px; }
+
+.side-section { display: flex; align-items: center; justify-content: space-between; margin: 18px 4px 6px 12px; color: #8b9491; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; }
+.side-add { display: grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: 4px; background: none; color: #7c8784; cursor: pointer; }
+.side-add:hover { background: #e9e6dd; color: var(--ink); }
+.side-projects { display: flex; flex-direction: column; gap: 1px; }
+.side-projects a { padding: 6px 12px; font-size: 13.5px; }
+.side-project-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.side-empty { margin: 4px 15px; color: #a4aaa6; font-size: 13px; }
+.side-skeleton { display: block; height: 14px; margin: 9px 15px; border-radius: 3px; background: linear-gradient(90deg, #ebe9e2, #f4f2ec, #ebe9e2); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.project-avatar { flex: none; display: grid; place-items: center; border-radius: 4px; color: #fff; font-weight: 700; letter-spacing: .3px; line-height: 1; }
 
 .app-main { padding: 40px clamp(16px, 4vw, 56px) 64px; min-width: 0; }
 .page-title { font-family: var(--serif); font-weight: 400; font-size: 34px; margin: 0 0 8px; color: var(--navy); letter-spacing: -.5px; }
@@ -67,7 +80,8 @@ textarea.text-input { height: auto; padding: 10px 12px; resize: vertical; }
 @media (max-width: 760px) {
   .app-shell { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr; }
   .app-top { padding: 0 16px; }
-  .app-side { flex-direction: row; overflow-x: auto; padding: 8px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .app-side { flex-direction: row; overflow-x: auto; padding: 8px; border-right: 0; border-bottom: 1px solid var(--line); position: static; height: auto; }
+  .side-section, .side-projects, .side-empty, .side-skeleton { display: none; }
   .app-side a, .app-side-soon { border-left: 0; border-bottom: 3px solid transparent; white-space: nowrap; }
   .app-side a.active { border-bottom-color: var(--gold-dark); }
   .app-side-soon { display: none; }

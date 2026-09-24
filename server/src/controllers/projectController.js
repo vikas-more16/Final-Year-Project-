@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { PROJECT_MODELS, PROJECT_MODEL_IDS } from '../config/constants.js'
+import { PROJECT_MODELS, PROJECT_MODEL_IDS, PROJECT_TABS } from '../config/constants.js'
 import { Project } from '../models/Project.js'
 import { TeamMember } from '../models/TeamMember.js'
 import { HttpError } from '../utils/HttpError.js'
@@ -55,6 +55,28 @@ export async function createProject(req, res) {
     await deleteBrd(brd.fileId)
     throw err
   }
+}
+
+export async function getProject(req, res) {
+  const project = await findProject(req)
+  const members = await TeamMember.find({ owner: req.user._id, projects: project._id }).sort({ status: 1, name: 1 })
+  res.json({
+    project: { ...project.toPublic(), memberCount: members.length },
+    members: members.map((m) => ({ id: m._id, name: m.name, email: m.email, role: m.role, status: m.displayStatus })),
+    models: PROJECT_MODELS,
+  })
+}
+
+export async function updateTabs(req, res) {
+  const project = await findProject(req)
+  const { tabs } = req.body
+  if (!Array.isArray(tabs) || tabs.length === 0) throw new HttpError(422, 'A project needs at least one tab')
+  if (tabs.some((t) => !PROJECT_TABS.includes(t)) || new Set(tabs).size !== tabs.length) {
+    throw new HttpError(422, 'Invalid tab list')
+  }
+  project.tabs = tabs
+  await project.save()
+  res.json({ project: project.toPublic() })
 }
 
 export async function replaceBrd(req, res) {

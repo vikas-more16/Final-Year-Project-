@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { PROJECT_MODEL_IDS } from '../config/constants.js'
+import { PROJECT_MODEL_IDS, PROJECT_TABS } from '../config/constants.js'
 
 const projectSchema = new mongoose.Schema(
   {
@@ -9,6 +9,8 @@ const projectSchema = new mongoose.Schema(
     description: { type: String, trim: true, maxlength: 500 },
     // Enforced in the controller so projects created before this field existed stay valid.
     model: { type: String, enum: PROJECT_MODEL_IDS },
+    // Ordered list of visible tabs; empty means "never customised", which shows every tab.
+    tabs: { type: [{ type: String, enum: PROJECT_TABS }], default: undefined },
     brd: {
       fileId: mongoose.Schema.Types.ObjectId, // GridFS file in the "brd" bucket
       originalName: String,
@@ -29,6 +31,7 @@ projectSchema.methods.toPublic = function toPublic() {
     key: this.key,
     description: this.description,
     model: this.model,
+    tabs: this.tabs?.length ? this.tabs : PROJECT_TABS,
     brd: this.brd?.fileId
       ? { name: this.brd.originalName, size: this.brd.size, mimeType: this.brd.mimeType, uploadedAt: this.brd.uploadedAt }
       : null,
